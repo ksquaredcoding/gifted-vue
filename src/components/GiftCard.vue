@@ -1,8 +1,8 @@
 <template>
-  <div class="col-md-3">
+  <div class="col-md-3 my-2">
     <div class="card">
-      <img :src="gift.url" :alt="gift.tag" class="img-fluid" v-if="gift.opened == true">
-      <img :src="unopenedGift" alt="" class="img-fluid unopened" v-else="gift.opened == false"
+      <img :src="gift.url" :alt="gift.tag" class="img-fluid img-fit rounded-top" v-if="gift.opened == true">
+      <img :src="unopenedGift" alt="" class="img-fluid unopened img-fit rounded-top" v-else="gift.opened == false"
         @click="unwrapGift(gift.id)">
       <div class="card-body">
         <p><b>{{gift.tag}}</b></p>
@@ -55,5 +55,11 @@ export default {
   border: 0.5rem solid red;
   cursor: pointer;
   padding: 1rem;
+}
+
+.img-fit {
+  height: 25rem;
+  width: 25rem;
+  object-fit: cover;
 }
 </style>
