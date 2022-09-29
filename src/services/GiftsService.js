@@ -23,6 +23,12 @@ class GiftsService {
     await gifServer.put(`/gifts/${gift.id}`, gift)
     let giftIndex = AppState.gifts.findIndex(gift)
     AppState.gifts.splice(giftIndex, 1, gift)
+    gift.url = res.data.url
+  }
+  async createGift(data) {
+    const res = await gifServer.post('/gifts', data)
+    const newGift = new Gift(res.data)
+    AppState.gifts = [newGift, ...AppState.gifts]
   }
 }
 

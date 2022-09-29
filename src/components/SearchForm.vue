@@ -4,15 +4,22 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Send New Gift</h5>
-          <form @submit.prevent="handleSubmit">
+          <form @submit.prevent="handleSubmit()">
             <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">Tag Your Gif</label>
-              <input type="text" class="form-control" id="gifTag" aria-describedby="gifTag" maxlength="50">
+              <label for="tag" class="form-label">Tag Your Gif</label>
+              <input type="text" class="form-control" id="tag" aria-describedby="tag" maxlength="50"
+                v-model="editable.tag" name="tag">
+            </div>
+            <div class="mb-3">
+              <label for="url" class="form-label">Url</label>
+              <input type="text" class="form-control" id="url" aria-describedby="url" maxlength="50"
+                v-model="editable.url" name="url">
             </div>
             <div class="mb-3">
               <label for="giphySearchTerm" class="form-label">Search Giphy</label>
               <input type="text" class="form-control" id="giphySearchTerm" required="true" minlength="2" maxlength="50"
                 name="search" v-model="editable.term">
+              <button class="btn btn-success" @click="search()" type="button">Search</button>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
@@ -34,17 +41,25 @@
 <script>
 import { logger } from '../utils/Logger.js';
 import Pop from '../utils/Pop.js';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { giphyService } from '../services/giphyService.js';
 import { AppState } from "../AppState.js";
 import { computed } from "@vue/reactivity";
+import { giftsService } from "../services/GiftsService.js";
 
 export default {
   setup() {
     const editable = ref({})
+    let tag = ''
+    watchEffect(() => {
+      if (AppState.giftUrl) {
+        editable.value.url = AppState.giftUrl
+      }
+    })
     return {
+      tag,
       editable,
-      async handleSubmit() {
+      async search() {
         try {
           const giphys = await giphyService.getGifsWithSearch(editable.value.term)
           return giphys
@@ -53,9 +68,19 @@ export default {
           Pop.error(error.message)
         }
       },
-      giphys: computed(() => AppState.giphyGifs)
+      giphys: computed(() => AppState.giphyGifs),
+      async handleSubmit() {
+        try {
+          await giftsService.createGift(editable.value)
+        } catch (error) {
+          logger.error('[CREATE GIFT]', error)
+          Pop.error(error.message)
+        }
+      },
     }
-  }
+
+  },
+
 }
 </script>
 

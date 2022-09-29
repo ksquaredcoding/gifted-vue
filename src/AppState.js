@@ -8,5 +8,6 @@ export const AppState = reactive({
   /**@type {import('./models/Gift').Gift[]} */
   gifts: [],
   /**@type {import('./models/Giphy').Giphy[]} */
-  giphyGifs: []
+  giphyGifs: [],
+  giftUrl: ''
 })
